@@ -1,6 +1,7 @@
 package com.desafio.votacao.service;
 
 import com.desafio.votacao.dto.VotoDTO;
+import com.desafio.votacao.exception.BusinessException;
 import com.desafio.votacao.model.Pauta;
 import com.desafio.votacao.model.Voto;
 import com.desafio.votacao.repository.PautaRepository;
@@ -31,7 +32,7 @@ public class VotoService {
     @Transactional
     public VotoDTO registrarVoto(Long pautaId, VotoDTO votoDTO) {
         Pauta pauta = pautaRepository.findById(pautaId)
-                .orElseThrow(() -> new RuntimeException("Pauta não encontrada"));
+                .orElseThrow(() -> new BusinessException("Pauta não encontrada"));
 
         votoValidator.validateEncerramento(pautaId);
         votoValidator.validateCpf(pautaId, votoDTO.getCpf());

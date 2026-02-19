@@ -1,6 +1,7 @@
 package com.desafio.votacao.service;
 
 import com.desafio.votacao.dto.SessaoResponseDTO;
+import com.desafio.votacao.exception.BusinessException;
 import com.desafio.votacao.model.Pauta;
 import com.desafio.votacao.model.Sessao;
 import com.desafio.votacao.repository.PautaRepository;
@@ -23,7 +24,7 @@ public class SessaoService {
     @Transactional
     public SessaoResponseDTO abrir(Long pautaId, Integer segundos) {
         Pauta pauta = pautaRepository.findById(pautaId)
-                .orElseThrow(() -> new RuntimeException("Pauta não encontrada"));
+                .orElseThrow(() -> new BusinessException("Pauta não encontrada"));
 
         sessaoValidator.validadeSessao(pauta);
 

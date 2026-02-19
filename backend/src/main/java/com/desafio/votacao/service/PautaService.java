@@ -3,6 +3,7 @@ package com.desafio.votacao.service;
 import com.desafio.votacao.dto.PautaRequestDTO;
 import com.desafio.votacao.dto.PautaResponseDTO;
 import com.desafio.votacao.dto.PautaResultadoDTO;
+import com.desafio.votacao.exception.BusinessException;
 import com.desafio.votacao.model.Pauta;
 import com.desafio.votacao.model.Voto;
 import com.desafio.votacao.model.VotoEnum;
@@ -41,7 +42,7 @@ public class PautaService {
     @Transactional(readOnly = true)
     public PautaResultadoDTO apurarVotos(Long pautaId) {
         Pauta pauta = pautaRepository.findById(pautaId)
-                .orElseThrow(() -> new RuntimeException("Pauta não encontrada"));
+                .orElseThrow(() -> new BusinessException("Pauta não encontrada"));
 
         var contagem = pauta.getVotos().stream()
                 .collect(Collectors.groupingBy(Voto::getDecisao, Collectors.counting()));

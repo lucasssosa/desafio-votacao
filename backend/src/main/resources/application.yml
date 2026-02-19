@@ -1,0 +1,3 @@
+api:
+  cpf:
+    base-url: http://localhost:8080/api-externa-cpf
