@@ -45,6 +45,7 @@ Diferente do CSS tradicional, o Tailwind permite construir interfaces modernas s
 A arquitetura de monorepo foi escolhida pela facilidade de configuração, permitindo que o desenvolvedor tenha o ecossistema completo (frontend e backend) disponível com apenas um comando de clone, simplificando o setup inicial do desafio.
 
 🛠️ Como Rodar o Projeto
+
 Pré-requisitos
 - Java 17
 - Node.js 18 ou superior
