@@ -3,7 +3,11 @@ package com.desafio.votacao.validator;
 import com.desafio.votacao.exception.BusinessException;
 import com.desafio.votacao.model.Pauta;
 import com.desafio.votacao.model.PautaStatusEnum;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
+@RequiredArgsConstructor
 public class PautaValidator {
 
     public void validadeStatus(Pauta pauta) {
