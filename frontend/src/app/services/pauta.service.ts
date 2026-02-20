@@ -1,40 +1,43 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Pauta } from '../models/pauta.model';
 import { Observable } from 'rxjs';
-import { FormsModule } from '@angular/forms';
+import { Pauta } from '../models/pauta.model';
 import { Voto } from '../models/voto.model';
-import { PautaResultado } from '../models/pauta-resultado.model';
+
+// Interface para garantir contrato no voto
+interface VotoRequest {
+  cpf: string;
+  decisao: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class PautaService {
+  private readonly http = inject(HttpClient);
+  
   private readonly API = 'http://localhost:8080/api/v1/pautas';
 
-  constructor(private http: HttpClient) {}
-
-  criarPauta(pauta: any) {
-    return this.http.post(this.API, pauta);
+  public listarPautas(): Observable<Pauta[]> {
+    return this.http.get<Pauta[]>(this.API);
   }
 
-  public abrirSessao(pautaId: number, segundos: number): Observable<any> {
-    return this.http.post(`${this.API}/${pautaId}/sessao`, { segundos });
+  public criarPauta(pauta: Partial<Pauta>): Observable<Pauta> {
+    return this.http.post<Pauta>(this.API, pauta);
   }
 
-  votar(pautaId: number, voto: string, cpf: string): Observable<any> {
-    console.log(pautaId,voto,cpf)
-    return this.http.post(`${this.API}/${pautaId}/votos`, {cpf: cpf, decisao: voto});
+  public abrirSessao(pautaId: number, segundos: number): Observable<Pauta> {
+    return this.http.post<Pauta>(`${this.API}/${pautaId}/sessao`, { segundos });
   }
 
-  apurarPauta(id: number): Observable<any> {
+  public votar(pautaId: number, voto: string, cpf: string): Observable<void> {
+    const payload: VotoRequest = { cpf, decisao: voto };
+    return this.http.post<void>(`${this.API}/${pautaId}/votos`, payload);
+  }
+
+  public apurarPauta(id: number): Observable<any> {
     return this.http.put<any>(`${this.API}/${id}/resultado`, {});
   }
 
-  buscarVotos(pautaId: number): Observable<Voto[]> {
+  public buscarVotos(pautaId: number): Observable<Voto[]> {
     return this.http.get<Voto[]>(`${this.API}/${pautaId}/votos`);
-  }
-
-  listarPautas(): Observable<Pauta[]> {
-  // Adicione <Pauta[]> aqui
-    return this.http.get<Pauta[]>(this.API);
   }
 }

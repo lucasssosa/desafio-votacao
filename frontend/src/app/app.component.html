@@ -4,7 +4,6 @@
       <span class="font-black text-2xl tracking-tighter text-sky-500">ASSEMBLY</span>
       <div class="flex gap-8 text-sm font-medium">
         <a href="#" class="text-white border-b-2 border-sky-500 pb-1">Plenário</a>
-        <a href="#" class="text-gray-400 hover:text-white transition-colors">Relatórios</a>
       </div>
     </div>
     <div class="flex items-center gap-4">
@@ -12,7 +11,6 @@
         <input type="text" placeholder="Filtrar pautas..." 
                class="bg-gray-800 text-sm rounded-full px-4 py-1.5 w-72 border border-gray-700 outline-none focus:border-emerald-500 transition-all">
       </div>
-      <div class="w-8 h-8 rounded-full bg-sky-600 flex items-center justify-center font-bold text-xs">LS</div>
     </div>
   </nav>
 
@@ -22,7 +20,7 @@
         <div>
           <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Módulo de Plenário</h1>
         </div>
-        <button (click)="toggleModal()" 
+        <button (click)="abrirModalPauta()" 
                 class="bg-emerald-600 hover:bg-sky-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-bold shadow-sm transition-all active:scale-95">
           <span class="text-xl leading-none">+</span> Nova Pauta
         </button>
@@ -97,12 +95,12 @@
   </div>
 </div>
 
-<div *ngIf="showModal" class="fixed inset-0 z-[1001] flex items-center justify-center bg-gray-900 bg-opacity-60 backdrop-blur-sm p-4">
+<div *ngIf="modalPauta" class="fixed inset-0 z-[1001] flex items-center justify-center bg-gray-900 bg-opacity-60 backdrop-blur-sm p-4">
   <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 border border-gray-200">
     
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-xl font-bold text-gray-800">Nova Pauta</h2>
-      <button (click)="toggleModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+      <button (click)="abrirModalPauta()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
     </div>
 
     <form (ngSubmit)="cadastrarPauta()" class="space-y-5">
@@ -122,7 +120,7 @@
       </div>
 
       <div class="flex justify-end items-center gap-3 mt-8">
-        <button (click)="toggleModal()" type="button" 
+        <button (click)="abrirModalPauta()" type="button" 
                 class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded transition-colors">
           Cancelar
         </button>

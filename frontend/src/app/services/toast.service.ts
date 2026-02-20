@@ -11,7 +11,7 @@ export class ToastService {
     if (this.timeout) clearTimeout(this.timeout);
     
     this.toastSubject.next({ msg: mensagem, tipo });
-    this.timeout = setTimeout(() => this.fechar(), 5000); // Aumentei para 5s já que é maior
+    this.timeout = setTimeout(() => this.fechar(), 5000);
   }
 
   public fechar(): void {

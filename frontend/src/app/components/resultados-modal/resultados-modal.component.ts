@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MaskCpfPipe } from '../../pipes/mask-cpf.pipe'; // Ajuste o caminho se necessário
+import { MaskCpfPipe } from '../../pipes/mask-cpf.pipe';
 
 @Component({
   selector: 'app-resultados-modal',

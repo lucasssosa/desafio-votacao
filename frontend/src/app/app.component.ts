@@ -8,12 +8,18 @@ import { VotosModalComponent } from './components/votos-modal/votos-modal.compon
 import { ResultadosModalComponent } from './components/resultados-modal/resultados-modal.component';
 import { ToastService } from './services/toast.service';
 import { ToastComponent } from './components/toast/toast.component';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, SessaoModalComponent, VotosModalComponent, ResultadosModalComponent, ToastComponent],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    SessaoModalComponent, 
+    VotosModalComponent, 
+    ResultadosModalComponent, 
+    ToastComponent
+  ],
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
@@ -21,17 +27,19 @@ export class AppComponent implements OnInit {
   private readonly toast = inject(ToastService);
 
   public pautas: Pauta[] = [];
+  public pautaSelecionada: Pauta | null = null;
   public kebabAberto: number | null = null;
-  public showModal = false;
+
+  public modalPauta = false;
   public exibirModalSessao = false;
   public exibirModalVoto = false;
   public exibirResultados = false;
-  public pautaSelecionada: any;
 
-  public novaPauta = {
-    titulo: '',
-    descricao: ''
-  };
+  public novaPauta = { titulo: '', descricao: '' };
+ 
+  public abrirModalPauta(): void {
+  this.modalPauta = !this.modalPauta;
+}
 
   ngOnInit(): void {
     this.carregarPautas();
@@ -39,7 +47,7 @@ export class AppComponent implements OnInit {
 
   public carregarPautas(): void {
     this.pautaService.listarPautas().subscribe({
-      next: (dados) => {this.pautas = dados; console.log(dados)},
+      next: (dados) => this.pautas = dados,
       error: (err) => this.tratarErro('Erro ao carregar pautas', err)
     });
   }
@@ -47,8 +55,8 @@ export class AppComponent implements OnInit {
   public cadastrarPauta(): void {
     this.pautaService.criarPauta(this.novaPauta).subscribe({
       next: () => {
-        this.toast.exibir('Pauta criada com sucesso!','sucesso');
-        this.toggleModal();
+        this.toast.exibir('Pauta criada com sucesso!', 'sucesso');
+        this.modalPauta = false;
         this.limparCampos();
         this.carregarPautas();
       },
@@ -57,8 +65,9 @@ export class AppComponent implements OnInit {
   }
 
   public abrirModalSessao(pauta: Pauta): void {
-    this.pautaSelecionada = pauta;
+    this.pautaSelecionada = { ...pauta };
     this.exibirModalSessao = true;
+    this.kebabAberto = null;
   }
 
   public confirmarSessao(segundos: number): void {
@@ -76,11 +85,12 @@ export class AppComponent implements OnInit {
 
   public abrirModalVoto(pauta: Pauta): void {
     if (pauta.status !== 'ABERTA') {
-      this.toast.exibir('Esta pauta não está aberta para votação.','erro');
+      this.toast.exibir('Esta pauta não está aberta para votação.', 'erro');
       return;
     }
-    this.pautaSelecionada = pauta;
+    this.pautaSelecionada = { ...pauta };
     this.exibirModalVoto = true;
+    this.kebabAberto = null;
   }
 
   public registrarVoto(dados: {voto: string, cpf: string}): void {
@@ -89,30 +99,26 @@ export class AppComponent implements OnInit {
     this.pautaService.votar(this.pautaSelecionada.id, dados.voto, dados.cpf).subscribe({
       next: () => {
         this.exibirModalVoto = false;
-        this.toast.exibir('Voto computado com sucesso!','sucesso');
+        this.toast.exibir('Voto computado com sucesso!', 'sucesso');
       },
       error: (err) => {
-        if (err.error?.message === "UNABLE_TO_VOTE") {
-          this.toast.exibir("CPF inválido ou não habilitado!",'erro')
-        } else {
-          this.tratarErro('Erro ao votar', err)
-        }
+        const msg = err.error?.message === "UNABLE_TO_VOTE" 
+          ? "CPF inválido ou não habilitado!" 
+          : "Erro ao votar";
+        this.toast.exibir(msg, 'erro');
       }
     });
   }
 
   public executarApuracao(id?: number): void {
-    if (id === undefined) {
-      this.toast.exibir('ID da pauta não encontrado', 'erro');
-      return;
-    }
+    if (!id) return;
 
     this.pautaService.apurarPauta(id).subscribe({
       next: (res) => {
-        console.log(res)
+        const total = `(${res.votosSim} vs ${res.votosNao})`;
         const mensagem = res.status === 'EMPATE' 
-          ? `A votação terminou em EMPATE! (${res.votosSim} vs ${res.votosNao})`
-          : `Pauta ${res.status}! (${res.votosSim} vs ${res.votosNao})`;
+          ? `A votação terminou em EMPATE! ${total}`
+          : `Pauta ${res.status}! ${total}`;
 
         this.toast.exibir(mensagem, 'sucesso');
         this.kebabAberto = null;
@@ -122,26 +128,10 @@ export class AppComponent implements OnInit {
     });
   }
 
-  public abrirModalResultados(pauta: any) {
-    this.pautaSelecionada = pauta;
+  public abrirModalResultados(pauta: Pauta): void {
+    this.pautaSelecionada = { ...pauta };
     this.exibirResultados = true;
     this.kebabAberto = null;
-
-    this.pautaService.listarPautas().subscribe({
-        next: (pautasAtualizadas: Pauta[]) => {
-          this.pautas = pautasAtualizadas;
-          
-          const pautaFresh = pautasAtualizadas.find(p => p.id === pauta.id);
-          if (pautaFresh) {
-            this.pautaSelecionada = { ...pautaFresh };
-          }
-        },
-        error: () => this.toast.exibir('Erro ao atualizar lista de pautas', 'erro')
-      });
-  }
-
-  public toggleModal(): void {
-    this.showModal = !this.showModal;
   }
 
   public toggleKebab(index: number, event: Event): void {
@@ -154,12 +144,12 @@ export class AppComponent implements OnInit {
     this.kebabAberto = null;
   }
 
-  private limparCampos(): void {
+  public limparCampos(): void {
     this.novaPauta = { titulo: '', descricao: '' };
   }
 
   private tratarErro(mensagem: string, err: any): void {
     const detalhe = err.error?.message || 'Servidor indisponível';
-    this.toast.exibir((`${mensagem}: ${detalhe}`),'erro');
+    this.toast.exibir(`${mensagem}: ${detalhe}`, 'erro');
   }
 }
