@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class SessaoResponseDTO {
 
     private Long id;
+    private LocalDateTime dataAbertura;
     private LocalDateTime dataFechamento;
     private Long pautaId;
 
@@ -19,6 +20,7 @@ public class SessaoResponseDTO {
         SessaoResponseDTO dto = new SessaoResponseDTO();
 
         dto.setId(sessao.getId());
+        dto.setDataAbertura(sessao.getDataAbertura());
         dto.setDataFechamento(sessao.getDataFechamento());
         dto.setPautaId(sessao.getPauta().getId());
 

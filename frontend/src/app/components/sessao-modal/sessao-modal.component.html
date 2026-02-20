@@ -1,0 +1,49 @@
+<div class="fixed inset-0 z-[1001] flex items-center justify-center bg-gray-900 bg-opacity-60 p-4">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-6 border border-gray-200">
+    
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-bold text-gray-800">Abrir Sessão</h2>
+      <button (click)="aoCancelar()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+    </div>
+
+    <div *ngIf="mensagemErro" class="mb-5 p-3 bg-red-50 text-red-700 text-xs rounded border border-red-100">
+      <span class="font-bold">Erro:</span> {{ mensagemErro }}
+    </div>
+
+    <p class="text-sm text-gray-500 mb-4">
+      Pauta: <span class="text-gray-900 font-medium">{{ pauta?.titulo }}</span>
+    </p>
+
+    <div class="flex items-center justify-center gap-4 bg-gray-50 p-6 rounded-lg border border-gray-100">
+      
+      <div class="flex flex-col items-center">
+        <label class="text-[10px] font-semibold text-gray-400 mb-2 uppercase">Horas</label>
+        <input type="number" [(ngModel)]="horas" (ngModelChange)="validarTempo()" min="0" max="24"
+               class="w-16 h-16 text-2xl font-semibold text-center bg-white border border-gray-300 rounded-md outline-none focus:border-emerald-500 text-gray-700">
+      </div>
+
+      <span class="text-2xl font-bold text-gray-300 mt-6">:</span>
+
+      <div class="flex flex-col items-center">
+        <label class="text-[10px] font-semibold text-gray-400 mb-2 uppercase">Minutos</label>
+        <input type="number" [(ngModel)]="minutos" (ngModelChange)="validarTempo()" 
+               [min]="horas === 0 ? 1 : 0" max="59"
+               [disabled]="horas >= 24"
+               [class.bg-gray-100]="horas >= 24"
+               [class.text-gray-300]="horas >= 24"
+               class="w-16 h-16 text-2xl font-semibold text-center bg-white border border-gray-300 rounded-md outline-none focus:border-emerald-500 text-gray-700 transition-all">
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 mt-8">
+      <button (click)="aoCancelar()" 
+              class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded transition-colors">
+        Cancelar
+      </button>
+      <button (click)="aoConfirmar()" 
+              class="bg-emerald-600 hover:bg-emerald-700 px-6 py-2 rounded text-white text-sm font-medium shadow-sm transition-colors">
+        Confirmar Abertura
+      </button>
+    </div>
+  </div>
+</div>

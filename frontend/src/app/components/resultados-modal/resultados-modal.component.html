@@ -1,0 +1,64 @@
+<div *ngIf="pauta" class="fixed inset-0 z-[1100] flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden border border-gray-100 animate-in zoom-in-95 duration-200">
+    
+    <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-start bg-gray-50/50">
+      <div>
+        <div class="flex items-center gap-3 mb-1">
+          <h2 class="text-2xl font-black text-gray-900 tracking-tight">Resultados</h2>
+          <span [ngClass]="{
+            'bg-emerald-100 text-emerald-700 border-emerald-200': pauta.status === 'ABERTA',
+            'bg-gray-100 text-gray-600 border-gray-200': pauta.status === 'ENCERRADA'
+          }" class="px-2.5 py-1 rounded text-[10px] font-black uppercase border tracking-wider">
+            {{ pauta.status === 'ABERTA' ? 'Sessão Ativa' : pauta.status }}
+          </span>
+        </div>
+        <p class="text-sm text-gray-500 font-medium">{{ pauta.titulo }}</p>
+      </div>
+      <button (click)="fechar.emit()" class="text-gray-400 hover:text-gray-600 text-3xl">&times;</button>
+    </div>
+
+    <div class="p-8">
+      <div class="grid grid-cols-2 gap-8 mb-10">
+        <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
+          <span class="text-emerald-600 font-black text-5xl">{{ votosSim }}</span>
+          <p class="text-emerald-700 font-bold uppercase text-[10px] mt-2">Sim</p>
+          <div class="w-full bg-emerald-200 h-3 rounded-full mt-4">
+            <div class="bg-emerald-500 h-full transition-all" [style.width.%]="porcentagem(votosSim)"></div>
+          </div>
+        </div>
+
+        <div class="bg-red-50 p-6 rounded-2xl border border-red-100">
+          <span class="text-red-600 font-black text-5xl">{{ votosNao }}</span>
+          <p class="text-red-700 font-bold uppercase text-[10px] mt-2">Não</p>
+          <div class="w-full bg-red-200 h-3 rounded-full mt-4">
+            <div class="bg-red-500 h-full transition-all" [style.width.%]="porcentagem(votosNao)"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-end mb-4">
+        <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Auditoria de Votos</h3>
+        <span class="text-[10px] font-bold text-gray-400 uppercase">{{ totalVotos }} total</span>
+      </div>
+
+      <div class="max-h-52 overflow-y-auto border border-gray-100 rounded-xl divide-y bg-gray-50/30">
+        <div *ngFor="let v of pauta.votos" class="px-5 py-3.5 flex justify-between items-center hover:bg-white">
+          <span class="text-sm font-bold text-gray-700">Doc: {{ v.cpf | maskCpf }}</span>
+          <span [class]="v.decisao === 'SIM' ? 'text-emerald-600' : 'text-red-600'" class="text-xs font-black uppercase">
+            {{ v.decisao }}
+          </span>
+        </div>
+        
+        <div *ngIf="totalVotos === 0" class="p-12 text-center text-gray-400 italic text-sm">
+          Nenhum voto computado.
+        </div>
+      </div>
+    </div>
+
+    <div class="px-8 py-5 bg-gray-50 border-t border-gray-100 flex justify-end">
+      <button (click)="fechar.emit()" class="bg-gray-900 text-white px-10 py-3 rounded-xl font-black text-xs uppercase shadow-lg">
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>

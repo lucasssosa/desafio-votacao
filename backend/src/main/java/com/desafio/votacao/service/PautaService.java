@@ -5,6 +5,7 @@ import com.desafio.votacao.dto.PautaResponseDTO;
 import com.desafio.votacao.dto.PautaResultadoDTO;
 import com.desafio.votacao.exception.BusinessException;
 import com.desafio.votacao.model.Pauta;
+import com.desafio.votacao.model.PautaStatusEnum;
 import com.desafio.votacao.model.Voto;
 import com.desafio.votacao.model.VotoEnum;
 import com.desafio.votacao.repository.PautaRepository;
@@ -39,10 +40,14 @@ public class PautaService {
         return PautaResponseDTO.fromEntity(pautaSalva);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PautaResultadoDTO apurarVotos(Long pautaId) {
         Pauta pauta = pautaRepository.findById(pautaId)
                 .orElseThrow(() -> new BusinessException("Pauta não encontrada"));
+
+        if (pauta.getStatusAtual() != PautaStatusEnum.ENCERRADA) {
+            throw new BusinessException("A pauta precisa estar ENCERRADA para ser apurada. Status atual: " + pauta.getStatusAtual());
+        }
 
         var contagem = pauta.getVotos().stream()
                 .collect(Collectors.groupingBy(Voto::getDecisao, Collectors.counting()));
@@ -50,9 +55,12 @@ public class PautaService {
         long votosPositivos = contagem.getOrDefault(VotoEnum.SIM, 0L);
         long votosNegativos = contagem.getOrDefault(VotoEnum.NAO, 0L);
 
-        String status = definirStatus(votosPositivos, votosNegativos);
+        String statusResult = definirStatus(votosPositivos, votosNegativos);
 
-        return new PautaResultadoDTO(pauta.getTitulo(), votosPositivos, votosNegativos, status);
+        pauta.setStatus(PautaStatusEnum.valueOf(statusResult));
+        pautaRepository.save(pauta);
+
+        return new PautaResultadoDTO(pauta.getTitulo(), votosPositivos, votosNegativos, statusResult);
     }
 
     private String definirStatus(long sim, long nao) {

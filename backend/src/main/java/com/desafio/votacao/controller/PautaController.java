@@ -25,6 +25,7 @@ import java.util.List;
 
 @RequestMapping("/api/v1/pautas")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class PautaController {
 
     private final PautaService pautaService;
@@ -52,18 +53,18 @@ public class PautaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(votoService.registrarVoto(pautaId, votoDTO));
     }
 
+    /** Apura e retorna o resultado consolidado da votação. */
+    @PutMapping("/{pautaId}/resultado")
+    public ResponseEntity<PautaResultadoDTO> verResultado(@PathVariable Long pautaId) {
+
+        return ResponseEntity.ok(pautaService.apurarVotos(pautaId));
+    }
+
     /** Listagem de pautas cadastradas. */
     @GetMapping
     public ResponseEntity<List<PautaResponseDTO>> buscarTodas() {
 
         return ResponseEntity.ok(pautaService.listarTodas());
-    }
-
-    /** Apura e retorna o resultado consolidado da votação. */
-    @GetMapping("/{pautaId}/resultado")
-    public ResponseEntity<PautaResultadoDTO> verResultado(@PathVariable Long pautaId) {
-
-        return ResponseEntity.ok(pautaService.apurarVotos(pautaId));
     }
 
     /** Lista todos os votos registrados para uma pauta. */

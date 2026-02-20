@@ -35,9 +35,24 @@ public class Pauta {
 
     private String descricao;
 
+    @Enumerated(EnumType.STRING)
+    private PautaStatusEnum status; 
+
     @OneToOne(mappedBy = "pauta", cascade = CascadeType.ALL)
     private Sessao sessao;
 
     @OneToMany(mappedBy = "pauta", fetch = FetchType.LAZY)
     private List<Voto> votos;
+
+    public PautaStatusEnum getStatusAtual() {
+        // Se foi apurado (status persistido), ele manda.
+        if (this.status != null) {
+            return this.status;
+        }
+        
+        // Caso contrário, calcula o estado volátil baseado na sessão.
+        if (sessao == null) return PautaStatusEnum.CRIADA;
+        
+        return sessao.isAtiva() ? PautaStatusEnum.ABERTA : PautaStatusEnum.ENCERRADA;
+    }
 }
