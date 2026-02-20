@@ -56,14 +56,19 @@ git clone <url-do-repositorio>
 cd <nome-da-pasta>
 
 2. Backend (Spring Boot)
+   
 Abra um terminal na pasta /backend:
+
 ./mvnw spring-boot:run
 
 O servidor iniciará em: http://localhost:8080
 
 3. Frontend (Angular)
+   
 Abra um segundo terminal na pasta /frontend:
+
 npm install
+
 ng serve
 
 A aplicação estará disponível em: http://localhost:4200
