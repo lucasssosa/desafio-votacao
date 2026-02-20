@@ -9,6 +9,8 @@ import com.desafio.votacao.model.PautaStatusEnum;
 import com.desafio.votacao.model.Voto;
 import com.desafio.votacao.model.VotoEnum;
 import com.desafio.votacao.repository.PautaRepository;
+import com.desafio.votacao.validator.PautaValidator;
+import com.desafio.votacao.validator.SessaoValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class PautaService {
 
     private final PautaRepository pautaRepository;
+    private final PautaValidator pautaValidator;
 
     /**
      * * NOTAS DE IMPLEMENTAÇÃO:
@@ -45,9 +48,7 @@ public class PautaService {
         Pauta pauta = pautaRepository.findById(pautaId)
                 .orElseThrow(() -> new BusinessException("Pauta não encontrada"));
 
-        if (pauta.getStatusAtual() != PautaStatusEnum.ENCERRADA) {
-            throw new BusinessException("A pauta precisa estar ENCERRADA para ser apurada. Status atual: " + pauta.getStatusAtual());
-        }
+        pautaValidator.validadeStatus(pauta);
 
         var contagem = pauta.getVotos().stream()
                 .collect(Collectors.groupingBy(Voto::getDecisao, Collectors.counting()));
