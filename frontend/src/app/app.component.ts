@@ -104,8 +104,7 @@ export class AppComponent implements OnInit {
       error: (err) => {
         const msg = err.error?.message === "UNABLE_TO_VOTE" 
           ? "CPF inválido ou não habilitado!" 
-          : "Erro ao votar";
-        this.toast.exibir(msg, 'erro');
+          :this.tratarErro('Erro ao votar', err);
       }
     });
   }
