@@ -2,6 +2,7 @@
 Sistema de votação cooperativa para gestão de pautas, sessões e apuração de resultados.
 
 📋 Funcionalidades Implementadas
+
 ✅ Gestão de Pautas: Criação e listagem.
 
 ✅ Controle de Sessão: Abertura de votação com tempo customizável.
@@ -13,7 +14,7 @@ Sistema de votação cooperativa para gestão de pautas, sessões e apuração d
 🔄 Fluxo de Estados da Pauta
 A pauta percorre os seguintes estados:
 
--CRIADA: Estado inicial após o cadastro.
+- CRIADA: Estado inicial após o cadastro.
 - ABERTA: Sessão iniciada e recebendo votos.
 - ENCERRADA: Tempo expirado, aguardando apuração.
 - APROVADA / REPROVADA / EMPATE: Resultado final após processamento.
